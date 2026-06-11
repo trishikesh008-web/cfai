@@ -1,40 +1,26 @@
-import time
-
-def dijkstra(graph, source):
+def bellman_ford(graph, source):
 
     n = len(graph)
 
     dist = [float('inf')] * n
 
-    visited = [False] * n
-
     dist[source] = 0
 
     start = time.perf_counter()
 
-    for _ in range(n):
+    for _ in range(n - 1):
 
-        min_dist = float('inf')
-        u = -1
+        for u in range(n):
 
-        for i in range(n):
+            for v in range(n):
 
-            if not visited[i] and dist[i] < min_dist:
+                if (
+                    graph[u][v]
+                    and dist[u] != float('inf')
+                    and dist[u] + graph[u][v] < dist[v]
+                ):
 
-                min_dist = dist[i]
-                u = i
-
-        visited[u] = True
-
-        for v in range(n):
-
-            if (
-                not visited[v]
-                and graph[u][v]
-                and dist[u] + graph[u][v] < dist[v]
-            ):
-
-                dist[v] = dist[u] + graph[u][v]
+                    dist[v] = dist[u] + graph[u][v]
 
     end = time.perf_counter()
 
