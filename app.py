@@ -1,10 +1,16 @@
-from flask import Flask, render_template
+import random
 
-app = Flask(__name__)
+def generate_graph(vertices):
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+    graph = [
+        [0 for _ in range(vertices)]
+        for _ in range(vertices)
+    ]
 
-if __name__ == "__main__":
-    app.run(debug=True)
+    for i in range(vertices):
+        for j in range(vertices):
+
+            if i != j:
+                graph[i][j] = random.randint(1, 20)
+
+    return graph
