@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijkstra vs Bellman-Ford</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container{
+            width: 80%;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        h1{
+            text-align: center;
+            color: #333;
+        }
+
+        .input-section{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input{
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+        }
+
+        button{
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background: #0056b3;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td{
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th{
+            background: #007bff;
+            color: white;
+        }
+
+        .info{
+            margin-top: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Dijkstra vs Bellman-Ford Algorithm</h1>
+
+    <div class="input-section">
+
+        <input type="number" id="vertices" placeholder="Number of Vertices">
+
+        <button onclick="compareAlgorithms()">Compare</button>
+
+    </div>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Algorithm</th>
+                <th>Execution Time (ms)</th>
+                <th>Shortest Distance</th>
+                <th>Time Complexity</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>Dijkstra</td>
+                <td id="dijkstraTime">-</td>
+                <td id="dijkstraDistance">-</td>
+                <td>O(V²)</td>
+            </tr>
+
+            <tr>
+                <td>Bellman-Ford</td>
+                <td id="bellmanTime">-</td>
+                <td id="bellmanDistance">-</td>
+                <td>O(V × E)</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <div class="info">
+
+        <h3>Theoretical Complexities</h3>
+
+        <p><b>Dijkstra:</b> Faster for graphs without negative weights.</p>
+
+        <p><b>Bellman-Ford:</b> Works with negative edge weights but slower.</p>
+
+    </div>
+
+    <canvas id="chart"></canvas>
+
+</div>
+
+<script>
+
+    let chartInstance;
+
+    function generateGraph(vertices){
+
+        let graph = [];
+
+        for(let i = 0; i < vertices; i++){
+
+            graph[i] = [];
+
+            for(let j = 0; j < vertices; j++){
+
+                if(i === j)
+                    graph[i][j] = 0;
+
+                else
+                    graph[i][j] = Math.floor(Math.random() * 20) + 1;
+            }
+        }
+
+        return graph;
+    }
+
+    function dijkstra(graph, source){
+
+        let n = graph.length;
+
+        let dist = new Array(n).fill(Infinity);
+
+        let visited = new Array(n).fill(false);
+
+        dist[source] = 0;
+
+        let start = performance.now();
+
+        for(let count = 0; count < n - 1; count++){
+
+            let min = Infinity;
+            let u = -1;
+
+            for(let v = 0; v < n; v++){
+
+                if(!visited[v] && dist[v] < min){
+
+                    min = dist[v];
+                    u = v;
+                }
+            }
+
+            visited[u] = true;
+
+            for(let v = 0; v < n; v++){
+
+                if(
+                    !visited[v] &&
+                    graph[u][v] &&
+                    dist[u] + graph[u][v] < dist[v]
+                ){
+
+                    dist[v] = dist[u] + graph[u][v];
+                }
+            }
+        }
+
+        let end = performance.now();
+
+        return {
+            time: (end - start).toFixed(5),
+            distance: dist[n - 1]
+        };
+    }
+
+    function bellmanFord(graph, source){
+
+        let n = graph.length;
+
+        let dist = new Array(n).fill(Infinity);
+
+        dist[source] = 0;
+
+        let start = performance.now();
+
+        for(let k = 0; k < n - 1; k++){
+
+            for(let u = 0; u < n; u++){
+
+                for(let v = 0; v < n; v++){
+
+                    if(
+                        dist[u] !== Infinity &&
+                        dist[u] + graph[u][v] < dist[v]
+                    ){
+
+                        dist[v] = dist[u] + graph[u][v];
+                    }
+                }
+            }
+        }
+
+        let end = performance.now();
+
+        return {
+            time: (end - start).toFixed(5),
+            distance: dist[n - 1]
+        };
+    }
+
+    function compareAlgorithms(){
+
+        let vertices = parseInt(document.getElementById("vertices").value);
+
+        if(!vertices || vertices < 2){
+
+            alert("Enter valid number of vertices");
+
+            return;
+        }
+
+        let graph = generateGraph(vertices);
+
+        let dijkstraResult = dijkstra(graph, 0);
+
+        let bellmanResult = bellmanFord(graph, 0);
+
+        document.getElementById("dijkstraTime").innerText =
+            dijkstraResult.time;
+
+        document.getElementById("bellmanTime").innerText =
+            bellmanResult.time;
+
+        document.getElementById("dijkstraDistance").innerText =
+            dijkstraResult.distance;
+
+        document.getElementById("bellmanDistance").innerText =
+            bellmanResult.distance;
+
+        drawChart(
+            dijkstraResult.time,
+            bellmanResult.time
+        );
+    }
+
+    function drawChart(dijkstraTime, bellmanTime){
+
+        let ctx = document.getElementById("chart").getContext("2d");
+
+        if(chartInstance){
+            chartInstance.destroy();
+        }
+
+        chartInstance = new Chart(ctx, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: ['Dijkstra', 'Bellman-Ford'],
+
+                datasets: [{
+
+                    label: 'Execution Time (ms)',
+
+                    data: [dijkstraTime, bellmanTime],
+
+                    backgroundColor: [
+                        '#36a2eb',
+                        '#ff6384'
+                    ]
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

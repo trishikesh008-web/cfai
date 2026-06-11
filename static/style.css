@@ -1,0 +1,191 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dijkstra vs Bellman-Ford</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Graph Shortest Path Comparison</h1>
+
+    <form method="POST">
+
+        <label>Number of Vertices</label>
+
+        <input
+            type="number"
+            name="vertices"
+            placeholder="Enter vertices"
+            required
+        >
+
+        <button type="submit">
+            Compare Algorithms
+        </button>
+
+    </form>
+
+    {% if result %}
+
+    <div class="result-card">
+
+        <h2>
+            Results for {{ result.vertices }} Vertices
+        </h2>
+
+    </div>
+
+    <table>
+
+        <tr>
+
+            <th>Algorithm</th>
+
+            <th>Execution Time (ms)</th>
+
+            <th>Shortest Distance</th>
+
+            <th>Time Complexity</th>
+
+        </tr>
+
+        <tr>
+
+            <td>Dijkstra</td>
+
+            <td>{{ result.dijkstra_time }}</td>
+
+            <td>{{ result.dijkstra_distance }}</td>
+
+            <td>O(V²)</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Bellman-Ford</td>
+
+            <td>{{ result.bellman_time }}</td>
+
+            <td>{{ result.bellman_distance }}</td>
+
+            <td>O(V × E)</td>
+
+        </tr>
+
+    </table>
+
+    <div class="info-box">
+
+        <h3>Theoretical Complexities</h3>
+
+        <p>
+            <b>Dijkstra:</b>
+            Faster for graphs without negative weights.
+        </p>
+
+        <p>
+            <b>Bellman-Ford:</b>
+            Works with negative edge weights but slower.
+        </p>
+
+    </div>
+
+    <canvas id="chart"></canvas>
+
+    <script>
+
+        const ctx = document.getElementById('chart');
+
+        new Chart(ctx, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: [
+                    'Dijkstra',
+                    'Bellman-Ford'
+                ],
+
+                datasets: [{
+
+                    label: 'Execution Time (ms)',
+
+                    data: [
+                        {{ result.dijkstra_time }},
+                        {{ result.bellman_time }}
+                    ],
+
+                    backgroundColor: [
+                        '#000000',
+                        '#555555'
+                    ],
+
+                    borderRadius: 10
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        labels: {
+
+                            color: 'black',
+
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+                            color: 'black'
+                        }
+                    },
+
+                    x: {
+
+                        ticks: {
+                            color: 'black'
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
