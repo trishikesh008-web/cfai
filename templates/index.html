@@ -1,0 +1,22 @@
+{% if result %}
+
+<table>
+
+<tr>
+    <th>Algorithm</th>
+    <th>Execution Time</th>
+</tr>
+
+<tr>
+    <td>Dijkstra</td>
+    <td>{{ result.dijkstra_time }}</td>
+</tr>
+
+<tr>
+    <td>Bellman-Ford</td>
+    <td>{{ result.bellman_time }}</td>
+</tr>
+
+</table>
+
+{% endif %}
