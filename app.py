@@ -1,27 +1,26 @@
-def bellman_ford(graph, source):
+from flask import request
 
-    n = len(graph)
+@app.route("/", methods=["GET", "POST"])
+def index():
 
-    dist = [float('inf')] * n
+    result = {}
 
-    dist[source] = 0
+    if request.method == "POST":
 
-    start = time.perf_counter()
+        vertices = int(request.form["vertices"])
 
-    for _ in range(n - 1):
+        graph = generate_graph(vertices)
 
-        for u in range(n):
+        result = {
 
-            for v in range(n):
+            "dijkstra_time":
+                dijkstra(graph, 0),
 
-                if (
-                    graph[u][v]
-                    and dist[u] != float('inf')
-                    and dist[u] + graph[u][v] < dist[v]
-                ):
+            "bellman_time":
+                bellman_ford(graph, 0)
+        }
 
-                    dist[v] = dist[u] + graph[u][v]
-
-    end = time.perf_counter()
-
-    return round((end - start) * 1000, 5)
+    return render_template(
+        "index.html",
+        result=result
+    )
