@@ -1,0 +1,41 @@
+body{
+    background:black;
+    color:white;
+    font-family:Poppins;
+}
+
+.container{
+    width:80%;
+    margin:auto;
+    padding:40px;
+}
+
+table{
+    width:100%;
+    background:white;
+    color:black;
+}
+Commit 10 — Final UI Enhancements
+git commit -m "Added animations and responsive design"
+style.css
+button:hover{
+
+    transform:scale(1.05);
+
+    transition:0.3s;
+}
+
+.container{
+
+    border-radius:25px;
+
+    box-shadow:
+        0 10px 30px rgba(255,255,255,0.2);
+}
+
+@media(max-width:768px){
+
+    .container{
+        width:95%;
+    }
+}
