@@ -3,19 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CFAI | Algorithm Comparison</title>
+    <title>CFAI | Algorithm Complexity Lab</title>
     <link rel="stylesheet" href="static/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       :root {
         color-scheme: dark;
-        --bg: #0b1020;
-        --panel: #141b2f;
-        --line: #283551;
-        --text: #f5f7fb;
-        --muted: #aab6ce;
-        --accent: #38bdf8;
-        --green: #22c55e;
+        --bg: #070a12;
+        --panel: #101827;
+        --panel-2: #131f33;
+        --line: #26354f;
+        --text: #f7fbff;
+        --muted: #9fb0c8;
+        --cyan: #22d3ee;
+        --blue: #60a5fa;
+        --green: #34d399;
+        --amber: #fbbf24;
+        --red: #fb7185;
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
       }
 
       * {
@@ -25,98 +30,409 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: Arial, sans-serif;
+        font-family: Inter, Segoe UI, Arial, sans-serif;
         background:
-          radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.18), transparent 32%),
-          linear-gradient(135deg, #0b1020, #111827);
+          radial-gradient(circle at 12% 8%, rgba(34, 211, 238, 0.2), transparent 28%),
+          radial-gradient(circle at 86% 4%, rgba(251, 191, 36, 0.14), transparent 24%),
+          linear-gradient(145deg, #070a12, #111827 50%, #08111e);
         color: var(--text);
       }
 
-      main {
-        width: min(980px, 92vw);
-        margin: 0 auto;
-        padding: 56px 0;
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
       }
 
-      .container {
-        background: rgba(20, 27, 47, 0.9);
+      main {
+        width: min(1180px, 92vw);
+        margin: 0 auto;
+        padding: 34px 0 56px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 22px;
+        align-items: stretch;
+        margin-bottom: 22px;
+      }
+
+      .panel {
+        background: linear-gradient(180deg, rgba(16, 24, 39, 0.94), rgba(12, 18, 31, 0.94));
         border: 1px solid var(--line);
-        padding: 28px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 24px;
       }
 
       .eyebrow {
-        color: var(--accent);
-        font-weight: 700;
-        letter-spacing: 0.14em;
+        color: var(--cyan);
+        font-weight: 900;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
-        font-size: 0.78rem;
+        font-size: 0.76rem;
       }
 
       h1 {
         margin: 12px 0;
-        font-size: clamp(2.4rem, 7vw, 4.6rem);
-        line-height: 1;
+        font-size: clamp(2.3rem, 6vw, 5.3rem);
+        line-height: 0.95;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+      }
+
+      h3 {
+        margin: 0 0 8px;
       }
 
       p {
         color: var(--muted);
         line-height: 1.7;
-        max-width: 720px;
       }
 
-      .chartWrap {
-        margin-top: 28px;
-        background: #0f172a;
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .stat {
         border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 18px;
+        border-radius: 14px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .stat strong {
+        display: block;
+        color: var(--green);
+        font-size: 1.4rem;
+      }
+
+      .controls {
+        display: grid;
+        gap: 14px;
+      }
+
+      label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin-bottom: 7px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      textarea,
+      input,
+      select {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #0b1220;
+        color: var(--text);
+        border-radius: 12px;
+        padding: 12px;
+        outline: none;
+      }
+
+      textarea {
+        min-height: 92px;
+        resize: vertical;
+      }
+
+      textarea:focus,
+      input:focus,
+      select:focus {
+        border-color: var(--cyan);
+        box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.14);
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 15px;
+        color: #04111b;
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--line);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      .lab {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 22px;
+      }
+
+      .chartCard {
+        min-height: 430px;
       }
 
       canvas {
         width: 100%;
-        max-height: 420px;
+        max-height: 360px;
       }
 
-      .note {
-        margin-top: 18px;
-        font-size: 0.92rem;
+      .tableWrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 14px;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 12px 10px;
+        text-align: left;
+      }
+
+      th {
+        color: var(--cyan);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      td {
+        color: var(--muted);
+      }
+
+      td strong {
+        color: var(--text);
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 22px;
+      }
+
+      .complexity {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid rgba(34, 211, 238, 0.4);
+        border-radius: 999px;
+        padding: 6px 10px;
+        margin: 4px 5px 0 0;
+        color: #dffbff;
+        background: rgba(34, 211, 238, 0.08);
+        font-size: 0.82rem;
+        font-weight: 800;
+      }
+
+      .message {
+        margin-top: 12px;
+        color: var(--amber);
+        min-height: 24px;
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .lab,
+        .cards,
+        .stats,
+        .row {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
     <main>
-      <section class="container">
-        <div class="eyebrow">CFAI Project</div>
-        <h1>Algorithm Execution Time Comparison</h1>
-        <p>
-          This GitHub Pages version shows a static comparison chart for the CFAI project.
-          The Flask version can still be used separately on a Python hosting platform.
-        </p>
-
-        <div class="chartWrap">
-          <canvas id="chart" aria-label="Algorithm comparison chart"></canvas>
+      <section class="hero">
+        <div class="panel">
+          <div class="eyebrow">CFAI Algorithm Lab</div>
+          <h1>Compare Search and Sorting Algorithms</h1>
+          <p>
+            Enter your own numbers, generate a test dataset, choose a target value,
+            and compare how different algorithms behave. The page measures browser
+            execution time and explains best, average, and worst case complexity.
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <strong>6</strong>
+              Algorithms
+            </div>
+            <div class="stat">
+              <strong>Custom</strong>
+              Input Data
+            </div>
+            <div class="stat">
+              <strong>Live</strong>
+              Chart Results
+            </div>
+          </div>
         </div>
 
-        <p class="note">
-          GitHub Pages serves static files only, so this root page is used instead of the
-          Flask template inside the templates folder.
-        </p>
+        <div class="panel controls">
+          <div>
+            <label for="dataInput">Your Data</label>
+            <textarea id="dataInput">42, 7, 19, 3, 88, 21, 55, 12, 9, 64, 31, 5</textarea>
+          </div>
+          <div class="row">
+            <div>
+              <label for="targetInput">Search Target</label>
+              <input id="targetInput" type="number" value="21" />
+            </div>
+            <div>
+              <label for="randomSize">Random Size</label>
+              <input id="randomSize" type="number" min="5" max="5000" value="120" />
+            </div>
+          </div>
+          <div class="actions">
+            <button id="runSearch">Compare Search</button>
+            <button id="runSort">Compare Sorting</button>
+            <button class="secondary" id="randomData">Generate Random Data</button>
+          </div>
+          <div class="message" id="message"></div>
+        </div>
+      </section>
+
+      <section class="lab">
+        <div class="panel chartCard">
+          <h2>Execution Time Chart</h2>
+          <p>Smaller bars mean faster execution for the current data.</p>
+          <canvas id="chart" aria-label="Algorithm execution chart"></canvas>
+        </div>
+
+        <div class="panel">
+          <h2>Measured Results</h2>
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time</th>
+                  <th>Result</th>
+                  <th>Complexity</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="cards">
+        <article class="complexity">
+          <h3>Linear Search</h3>
+          <p>Checks every value one by one. Works on unsorted data and is simple to understand.</p>
+          <span class="badge">Best O(1)</span>
+          <span class="badge">Average O(n)</span>
+          <span class="badge">Worst O(n)</span>
+        </article>
+        <article class="complexity">
+          <h3>Binary Search</h3>
+          <p>Repeatedly divides sorted data in half. It is much faster, but the data must be sorted.</p>
+          <span class="badge">Best O(1)</span>
+          <span class="badge">Average O(log n)</span>
+          <span class="badge">Worst O(log n)</span>
+        </article>
+        <article class="complexity">
+          <h3>Bubble Sort</h3>
+          <p>Swaps neighboring values until the array is sorted. It is easy to learn but slow for large data.</p>
+          <span class="badge">Best O(n)</span>
+          <span class="badge">Average O(n²)</span>
+          <span class="badge">Worst O(n²)</span>
+        </article>
+        <article class="complexity">
+          <h3>Insertion Sort</h3>
+          <p>Builds a sorted section step by step. It performs well when data is already almost sorted.</p>
+          <span class="badge">Best O(n)</span>
+          <span class="badge">Average O(n²)</span>
+          <span class="badge">Worst O(n²)</span>
+        </article>
+        <article class="complexity">
+          <h3>Merge Sort</h3>
+          <p>Splits data, sorts each part, and merges it back. It is reliable for larger datasets.</p>
+          <span class="badge">Best O(n log n)</span>
+          <span class="badge">Average O(n log n)</span>
+          <span class="badge">Worst O(n log n)</span>
+        </article>
+        <article class="complexity">
+          <h3>Quick Sort</h3>
+          <p>Uses a pivot to divide data. It is usually fast, though pivot choice affects worst case behavior.</p>
+          <span class="badge">Best O(n log n)</span>
+          <span class="badge">Average O(n log n)</span>
+          <span class="badge">Worst O(n²)</span>
+        </article>
       </section>
     </main>
 
     <script>
-      const ctx = document.getElementById("chart");
+      const dataInput = document.getElementById("dataInput");
+      const targetInput = document.getElementById("targetInput");
+      const randomSize = document.getElementById("randomSize");
+      const message = document.getElementById("message");
+      const resultsBody = document.getElementById("resultsBody");
+      const chartContext = document.getElementById("chart");
 
-      new Chart(ctx, {
+      const complexities = {
+        "Linear Search": "O(n)",
+        "Binary Search": "O(log n)",
+        "Bubble Sort": "O(n²)",
+        "Insertion Sort": "O(n²)",
+        "Merge Sort": "O(n log n)",
+        "Quick Sort": "O(n log n)",
+      };
+
+      const chart = new Chart(chartContext, {
         type: "bar",
         data: {
-          labels: ["Dijkstra", "Bellman-Ford"],
+          labels: [],
           datasets: [
             {
-              label: "Execution Time",
-              data: [12, 28],
-              backgroundColor: ["rgba(56, 189, 248, 0.8)", "rgba(34, 197, 94, 0.8)"],
-              borderColor: ["#38bdf8", "#22c55e"],
+              label: "Execution Time (ms)",
+              data: [],
+              backgroundColor: [
+                "rgba(34, 211, 238, 0.8)",
+                "rgba(96, 165, 250, 0.8)",
+                "rgba(52, 211, 153, 0.8)",
+                "rgba(251, 191, 36, 0.8)",
+                "rgba(248, 113, 113, 0.8)",
+                "rgba(167, 139, 250, 0.8)",
+              ],
+              borderColor: ["#22d3ee", "#60a5fa", "#34d399", "#fbbf24", "#f87171", "#a78bfa"],
               borderWidth: 1,
             },
           ],
@@ -126,31 +442,211 @@
           plugins: {
             legend: {
               labels: {
-                color: "#f5f7fb",
+                color: "#f7fbff",
               },
             },
           },
           scales: {
             x: {
               ticks: {
-                color: "#aab6ce",
+                color: "#9fb0c8",
               },
               grid: {
-                color: "rgba(170, 182, 206, 0.12)",
+                color: "rgba(159, 176, 200, 0.12)",
               },
             },
             y: {
               beginAtZero: true,
               ticks: {
-                color: "#aab6ce",
+                color: "#9fb0c8",
               },
               grid: {
-                color: "rgba(170, 182, 206, 0.12)",
+                color: "rgba(159, 176, 200, 0.12)",
               },
             },
           },
         },
       });
+
+      function parseData() {
+        const numbers = dataInput.value
+          .split(/[\s,]+/)
+          .map((value) => Number(value.trim()))
+          .filter((value) => Number.isFinite(value));
+
+        if (numbers.length < 2) {
+          throw new Error("Enter at least two numbers separated by commas or spaces.");
+        }
+
+        return numbers;
+      }
+
+      function measure(name, action, resultFormatter) {
+        const start = performance.now();
+        const result = action();
+        const end = performance.now();
+
+        return {
+          name,
+          time: Math.max(end - start, 0.001),
+          result: resultFormatter(result),
+          complexity: complexities[name],
+        };
+      }
+
+      function linearSearch(data, target) {
+        for (let index = 0; index < data.length; index += 1) {
+          if (data[index] === target) return index;
+        }
+        return -1;
+      }
+
+      function binarySearch(data, target) {
+        const sorted = [...data].sort((a, b) => a - b);
+        let low = 0;
+        let high = sorted.length - 1;
+
+        while (low <= high) {
+          const mid = Math.floor((low + high) / 2);
+          if (sorted[mid] === target) return mid;
+          if (sorted[mid] < target) low = mid + 1;
+          else high = mid - 1;
+        }
+
+        return -1;
+      }
+
+      function bubbleSort(data) {
+        const arr = [...data];
+        for (let i = 0; i < arr.length - 1; i += 1) {
+          let swapped = false;
+          for (let j = 0; j < arr.length - i - 1; j += 1) {
+            if (arr[j] > arr[j + 1]) {
+              [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+              swapped = true;
+            }
+          }
+          if (!swapped) break;
+        }
+        return arr;
+      }
+
+      function insertionSort(data) {
+        const arr = [...data];
+        for (let i = 1; i < arr.length; i += 1) {
+          const key = arr[i];
+          let j = i - 1;
+          while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j -= 1;
+          }
+          arr[j + 1] = key;
+        }
+        return arr;
+      }
+
+      function mergeSort(data) {
+        if (data.length <= 1) return data;
+        const mid = Math.floor(data.length / 2);
+        const left = mergeSort(data.slice(0, mid));
+        const right = mergeSort(data.slice(mid));
+        const merged = [];
+        let i = 0;
+        let j = 0;
+
+        while (i < left.length && j < right.length) {
+          merged.push(left[i] <= right[j] ? left[i++] : right[j++]);
+        }
+
+        return merged.concat(left.slice(i), right.slice(j));
+      }
+
+      function quickSort(data) {
+        if (data.length <= 1) return data;
+        const [pivot, ...rest] = data;
+        const left = rest.filter((value) => value < pivot);
+        const right = rest.filter((value) => value >= pivot);
+        return quickSort(left).concat(pivot, quickSort(right));
+      }
+
+      function renderResults(results) {
+        chart.data.labels = results.map((item) => item.name);
+        chart.data.datasets[0].data = results.map((item) => Number(item.time.toFixed(4)));
+        chart.update();
+
+        resultsBody.innerHTML = results
+          .map(
+            (item) => `
+              <tr>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.time.toFixed(4)} ms</td>
+                <td>${item.result}</td>
+                <td>${item.complexity}</td>
+              </tr>
+            `
+          )
+          .join("");
+      }
+
+      function runSearchComparison() {
+        try {
+          const data = parseData();
+          const target = Number(targetInput.value);
+
+          if (!Number.isFinite(target)) {
+            throw new Error("Enter a valid number to search.");
+          }
+
+          const results = [
+            measure("Linear Search", () => linearSearch(data, target), (index) =>
+              index >= 0 ? `Found at original index ${index}` : "Not found"
+            ),
+            measure("Binary Search", () => binarySearch(data, target), (index) =>
+              index >= 0 ? `Found in sorted data at index ${index}` : "Not found"
+            ),
+          ];
+
+          renderResults(results);
+          message.textContent = `Compared search algorithms on ${data.length} values.`;
+        } catch (error) {
+          message.textContent = error.message;
+        }
+      }
+
+      function runSortComparison() {
+        try {
+          const data = parseData();
+          const limitedSlowData = data.slice(0, 1200);
+          const results = [
+            measure("Bubble Sort", () => bubbleSort(limitedSlowData), (sorted) => `${sorted.length} values sorted`),
+            measure("Insertion Sort", () => insertionSort(limitedSlowData), (sorted) => `${sorted.length} values sorted`),
+            measure("Merge Sort", () => mergeSort([...data]), (sorted) => `${sorted.length} values sorted`),
+            measure("Quick Sort", () => quickSort([...data]), (sorted) => `${sorted.length} values sorted`),
+          ];
+
+          renderResults(results);
+          message.textContent =
+            data.length > limitedSlowData.length
+              ? `Compared sorting algorithms. Slow O(n²) sorts used first ${limitedSlowData.length} values to keep the page responsive.`
+              : `Compared sorting algorithms on ${data.length} values.`;
+        } catch (error) {
+          message.textContent = error.message;
+        }
+      }
+
+      function generateRandomData() {
+        const size = Math.min(Math.max(Number(randomSize.value) || 120, 5), 5000);
+        const data = Array.from({ length: size }, () => Math.floor(Math.random() * 1000));
+        dataInput.value = data.join(", ");
+        targetInput.value = data[Math.floor(Math.random() * data.length)];
+        message.textContent = `Generated ${size} random values.`;
+      }
+
+      document.getElementById("runSearch").addEventListener("click", runSearchComparison);
+      document.getElementById("runSort").addEventListener("click", runSortComparison);
+      document.getElementById("randomData").addEventListener("click", generateRandomData);
+
+      runSearchComparison();
     </script>
   </body>
 </html>
